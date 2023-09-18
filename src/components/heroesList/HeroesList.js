@@ -4,7 +4,7 @@ import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from "../spinner/Spinner";
 
 const HeroesList = () => {
-  const { heroes, loadingStatus } = useSelector((state) => state);
+  const { heroes, loadingStatus, activeFilter } = useSelector((state) => state);
 
   if (loadingStatus === "loading") {
     return <Spinner />;
@@ -29,11 +29,16 @@ const HeroesList = () => {
   }
 
   const renderHeroesList = (arr) => {
-    if (arr.length === 0) {
+    const filteredArr =
+      activeFilter === "all"
+        ? arr
+        : arr.filter((item) => item.element === activeFilter);
+
+    if (filteredArr.length === 0) {
       return <h5 className="text-center mt-5">Героев пока нет</h5>;
     }
 
-    return arr.map(({ id, ...props }) => {
+    return filteredArr.map(({ id, ...props }) => {
       return <HeroesListItem key={id} id={id} {...props} />;
     });
   };

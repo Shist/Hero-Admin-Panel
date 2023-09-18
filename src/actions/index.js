@@ -47,3 +47,10 @@ export const filtersFetchingError = () => {
     type: "FILTERS_FETCHING_ERROR",
   };
 };
+
+export const filterChanged = (newActiveFilter) => {
+  return {
+    type: "FILTER_CHANGED",
+    payload: newActiveFilter,
+  };
+};
