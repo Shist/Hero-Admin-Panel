@@ -1,1 +1,3 @@
-This is test project with hero admin panel!
+# Hero-Admin-Panel
+
+This is a project that shows working with React + Redux using Finite-State-Machine (FSM) ideology

@@ -41,9 +41,6 @@ const App = () => {
           <HeroesFilters />
         </div>
       </div>
-      {heroesloadingStatus === "loading" ||
-        heroesloadingStatus === "creating" ||
-        heroesloadingStatus === "deleting"}
       <BottomFixedSpinner
         dataIsSending={spinnerIsNeeded}
         label={spinnerLabel}
