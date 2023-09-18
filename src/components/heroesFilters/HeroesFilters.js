@@ -30,7 +30,7 @@ const HeroesFilters = () => {
     // eslint-disable-next-line no-use-before-define
   }, []);
 
-  if (filtersLoadingStatus === "loading") {
+  if (filtersLoadingStatus === "fetching") {
     return <Spinner />;
   } else if (filtersLoadingStatus === "fetch-error") {
     return (

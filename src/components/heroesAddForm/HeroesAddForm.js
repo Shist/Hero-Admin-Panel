@@ -95,7 +95,7 @@ const HeroesAddForm = () => {
         </div>
 
         <div className="mb-3">
-          {filtersLoadingStatus === "loading" ? (
+          {filtersLoadingStatus === "fetching" ? (
             <Spinner />
           ) : (
             <>

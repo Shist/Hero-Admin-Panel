@@ -9,7 +9,7 @@ const filters = (state = initialState, action) => {
     case "FILTERS_FETCHING":
       return {
         ...state,
-        loadingStatus: "loading",
+        loadingStatus: "fetching",
       };
     case "FILTERS_FETCHED":
       return {
