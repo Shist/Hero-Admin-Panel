@@ -19,11 +19,5 @@
       "element": "water"
     }
   ],
-  "filters": [
-    "all",
-    "fire",
-    "water",
-    "wind",
-    "earth"
-  ]
+  "filters": ["all", "fire", "water", "wind", "earth"]
 }

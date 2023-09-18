@@ -56,9 +56,11 @@ const HeroesAddForm = () => {
           description: text,
           element: element,
         };
-        resetForm();
         request(`http://localhost:3001/heroes`, "POST", JSON.stringify(newHero))
-          .then(() => dispatch(heroesFetched([...heroes, newHero])))
+          .then(() => {
+            resetForm();
+            dispatch(heroesFetched([...heroes, newHero]));
+          })
           .catch(() => dispatch(heroesSendingError()));
       }}
     >
