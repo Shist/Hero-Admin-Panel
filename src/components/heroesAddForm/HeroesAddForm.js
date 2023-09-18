@@ -16,18 +16,8 @@ import {
 } from "formik";
 import * as Yup from "yup";
 
-// Задача для этого компонента:
-// Реализовать создание нового героя с введенными данными. Он должен попадать
-// в общее состояние и отображаться в списке + фильтроваться
-// Уникальный идентификатор персонажа можно сгенерировать через uiid
-// Усложненная задача:
-// Персонаж создается и в файле json при помощи метода POST
-// Дополнительно:
-// Элементы <option></option> желательно сформировать на базе
-// данных из фильтров
-
 const HeroesAddForm = () => {
-  const heroes = useSelector((state) => state.heroes);
+  const { heroes, filters } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
@@ -116,10 +106,13 @@ const HeroesAddForm = () => {
             name="element"
           >
             <option>Я владею элементом...</option>
-            <option value="fire">Огонь</option>
-            <option value="water">Вода</option>
-            <option value="wind">Ветер</option>
-            <option value="earth">Земля</option>
+            {filters
+              .filter((item) => item.name !== "all")
+              .map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.label}
+                </option>
+              ))}
           </Field>
           <FormikErrorMessage
             component="div"
