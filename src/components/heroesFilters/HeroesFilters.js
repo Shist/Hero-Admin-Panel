@@ -1,23 +1,51 @@
+import { useEffect } from "react";
+import { useHttp } from "../../hooks/http.hook";
 import { useDispatch, useSelector } from "react-redux";
 
-import { filterChanged } from "../../actions";
+import {
+  filtersFetching,
+  filtersFetched,
+  filtersFetchingError,
+  activeFilterChanged,
+} from "../../actions";
+
+import Spinner from "../spinner/Spinner";
 
 var classNames = require("classnames");
 
 const HeroesFilters = () => {
-  const { filters, activeFilter } = useSelector((state) => state);
+  const {
+    filtersArr,
+    loadingStatus: filtersLoadingStatus,
+    activeFilter,
+  } = useSelector((state) => state.filters);
   const dispatch = useDispatch();
+  const { request } = useHttp();
 
-  const btnClicked = (filterName) => {
-    dispatch(filterChanged(filterName));
-  };
+  useEffect(() => {
+    dispatch(filtersFetching());
+    request("http://localhost:3001/filters")
+      .then((data) => dispatch(filtersFetched(data)))
+      .catch(() => dispatch(filtersFetchingError()));
+    // eslint-disable-next-line no-use-before-define
+  }, []);
+
+  if (filtersLoadingStatus === "loading") {
+    return <Spinner />;
+  } else if (filtersLoadingStatus === "fetch-error") {
+    return (
+      <h5 className="text-center mt-5">
+        Ошибка во время попытки загрузки фильтров
+      </h5>
+    );
+  }
 
   return (
     <div className="card shadow-lg mt-4">
       <div className="card-body">
         <p className="card-text">Отфильтруйте героев по элементам</p>
         <div className="btn-group">
-          {filters.map((item) => {
+          {filtersArr.map((item) => {
             let btnClass = null;
             switch (item.name) {
               case "all":
@@ -44,7 +72,7 @@ const HeroesFilters = () => {
                 className={classNames("btn", btnClass, {
                   active: item.name === activeFilter,
                 })}
-                onClick={() => btnClicked(item.name)}
+                onClick={() => dispatch(activeFilterChanged(item.name))}
               >
                 {item.label}
               </button>

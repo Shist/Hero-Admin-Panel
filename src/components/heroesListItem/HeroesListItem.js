@@ -1,24 +1,17 @@
 import { useHttp } from "../../hooks/http.hook";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import {
-  heroesFetching,
-  heroesFetched,
-  heroesDeletingError,
-} from "../../actions";
+import { heroDeleted, heroDeleting, heroDeletingError } from "../../actions";
 
 const HeroesListItem = ({ id, name, description, element }) => {
-  const heroes = useSelector((state) => state.heroes);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
   const deleteItem = async () => {
-    dispatch(heroesFetching());
+    dispatch(heroDeleting());
     request(`http://localhost:3001/heroes/${id}`, "DELETE")
-      .then(() =>
-        dispatch(heroesFetched(heroes.filter((hero) => hero.id !== id)))
-      )
-      .catch(() => dispatch(heroesDeletingError()));
+      .then(() => dispatch(heroDeleted(id)))
+      .catch(() => dispatch(heroDeletingError()));
   };
 
   let elementClassName;

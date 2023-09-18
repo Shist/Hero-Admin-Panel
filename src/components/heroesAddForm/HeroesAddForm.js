@@ -1,11 +1,7 @@
 import { useHttp } from "../../hooks/http.hook";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  heroesFetching,
-  heroesFetched,
-  heroesSendingError,
-} from "../../actions";
+import { heroCreating, heroCreated, heroCreatingError } from "../../actions";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -16,8 +12,12 @@ import {
 } from "formik";
 import * as Yup from "yup";
 
+import Spinner from "../spinner/Spinner";
+
 const HeroesAddForm = () => {
-  const { heroes, filters } = useSelector((state) => state);
+  const { filtersArr, loadingStatus: filtersLoadingStatus } = useSelector(
+    (state) => state.filters
+  );
   const dispatch = useDispatch();
   const { request } = useHttp();
 
@@ -39,19 +39,19 @@ const HeroesAddForm = () => {
         ),
       })}
       onSubmit={({ name, text, element }, { resetForm }) => {
-        dispatch(heroesFetching());
         const newHero = {
           id: uuidv4(),
           name: name,
           description: text,
           element: element,
         };
+        dispatch(heroCreating());
         request(`http://localhost:3001/heroes`, "POST", JSON.stringify(newHero))
           .then(() => {
             resetForm();
-            dispatch(heroesFetched([...heroes, newHero]));
+            dispatch(heroCreated(newHero));
           })
-          .catch(() => dispatch(heroesSendingError()));
+          .catch(() => dispatch(heroCreatingError()));
       }}
     >
       <Form className="border p-4 shadow-lg rounded">
@@ -95,25 +95,32 @@ const HeroesAddForm = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="element" className="form-label">
-            Выбрать элемент героя
-          </label>
-          <Field
-            as="select"
-            required
-            className="form-select"
-            id="element"
-            name="element"
-          >
-            <option>Я владею элементом...</option>
-            {filters
-              .filter((item) => item.name !== "all")
-              .map((item) => (
-                <option key={item.id} value={item.name}>
-                  {item.label}
-                </option>
-              ))}
-          </Field>
+          {filtersLoadingStatus === "loading" ? (
+            <Spinner />
+          ) : (
+            <>
+              <label htmlFor="element" className="form-label">
+                Выбрать элемент героя
+              </label>
+              <Field
+                as="select"
+                required
+                className="form-select"
+                id="element"
+                name="element"
+                disabled={filtersLoadingStatus === "fetch-error"}
+              >
+                <option>Я владею элементом...</option>
+                {filtersArr
+                  .filter((item) => item.name !== "all")
+                  .map((item) => (
+                    <option key={item.id} value={item.name}>
+                      {item.label}
+                    </option>
+                  ))}
+              </Field>
+            </>
+          )}
           <FormikErrorMessage
             component="div"
             name="element"

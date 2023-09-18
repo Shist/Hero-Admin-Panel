@@ -17,15 +17,41 @@ export const heroesFetchingError = () => {
   };
 };
 
-export const heroesDeletingError = () => {
+export const heroDeleting = () => {
   return {
-    type: "HEROES_DELETING_ERROR",
+    type: "HERO_DELETING",
   };
 };
 
-export const heroesSendingError = () => {
+export const heroDeleted = (id) => {
   return {
-    type: "HEROES_SENDING_ERROR",
+    type: "HERO_DELETED",
+    payload: id,
+  };
+};
+
+export const heroDeletingError = () => {
+  return {
+    type: "HERO_DELETING_ERROR",
+  };
+};
+
+export const heroCreating = () => {
+  return {
+    type: "HERO_CREATING",
+  };
+};
+
+export const heroCreated = (hero) => {
+  return {
+    type: "HERO_CREATED",
+    payload: hero,
+  };
+};
+
+export const heroCreatingError = () => {
+  return {
+    type: "HERO_CREATING_ERROR",
   };
 };
 
@@ -48,9 +74,9 @@ export const filtersFetchingError = () => {
   };
 };
 
-export const filterChanged = (newActiveFilter) => {
+export const activeFilterChanged = (newActiveFilter) => {
   return {
-    type: "FILTER_CHANGED",
+    type: "ACTIVE_FILTER_CHANGED",
     payload: newActiveFilter,
   };
 };
