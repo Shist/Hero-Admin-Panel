@@ -1,13 +1,25 @@
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDeleteHeroMutation } from "../../api/apiSlice";
 
-import { deleteHero } from "../heroesList/heroesSlice";
-
-const HeroesListItem = ({ id, name, description, element }) => {
-  const dispatch = useDispatch();
+const HeroesListItem = ({
+  id,
+  setDeleteIsLoading,
+  setDeleteIsError,
+  name,
+  description,
+  element,
+}) => {
+  const [deleteHero, { isLoading, isError }] = useDeleteHeroMutation();
 
   const deleteItem = async () => {
-    dispatch(deleteHero(id));
+    deleteHero(id);
   };
+
+  useEffect(() => {
+    setDeleteIsLoading(isLoading);
+    setDeleteIsError(isError);
+    // eslint-disable-next-line no-use-before-define
+  }, [isLoading, isError]);
 
   let elementClassName;
 

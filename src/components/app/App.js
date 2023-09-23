@@ -1,5 +1,4 @@
-import { useSelector } from "react-redux";
-
+import { useState } from "react";
 import HeroesList from "../heroesList/HeroesList";
 import HeroesAddForm from "../heroesAddForm/HeroesAddForm";
 import HeroesFilters from "../heroesFilters/HeroesFilters";
@@ -8,36 +7,44 @@ import BottomFixedSpinner from "../bottomFixedSpinner/BottomFixedSpinner";
 import "./app.scss";
 
 const App = () => {
-  const heroesloadingStatus = useSelector(
-    (state) => state.heroes.loadingStatus
-  );
+  const [getIsLoading, setGetIsLoading] = useState(false);
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
+  const [deleteIsError, setDeleteIsError] = useState(false);
+  const [createIsLoading, setCreateIsLoading] = useState(false);
+  const [createIsError, setCreateIsError] = useState(false);
+
   let spinnerIsNeeded = false;
   let spinnerLabel = "";
 
-  switch (heroesloadingStatus) {
-    case "fetching":
-      spinnerIsNeeded = true;
-      spinnerLabel = "Загрузка героев";
-      break;
-    case "creating":
-      spinnerIsNeeded = true;
-      spinnerLabel = "Создание нового героя";
-      break;
-    case "deleting":
-      spinnerIsNeeded = true;
-      spinnerLabel = "Удаление героя";
-      break;
-    default:
-      spinnerIsNeeded = false;
-      spinnerLabel = "";
+  if (getIsLoading) {
+    spinnerIsNeeded = true;
+    spinnerLabel = "Загрузка героев";
+  } else if (deleteIsLoading) {
+    spinnerIsNeeded = true;
+    spinnerLabel = "Удаление героя";
+  } else if (createIsLoading) {
+    spinnerIsNeeded = true;
+    spinnerLabel = "Создание нового героя";
+  } else {
+    spinnerIsNeeded = false;
+    spinnerLabel = "";
   }
 
   return (
     <main className="app">
       <div className="content">
-        <HeroesList />
+        <HeroesList
+          setGetIsLoading={setGetIsLoading}
+          setDeleteIsLoading={setDeleteIsLoading}
+          deleteIsError={deleteIsError}
+          setDeleteIsError={setDeleteIsError}
+          createIsError={createIsError}
+        />
         <div className="content__interactive">
-          <HeroesAddForm />
+          <HeroesAddForm
+            setCreateIsLoading={setCreateIsLoading}
+            setCreateIsError={setCreateIsError}
+          />
           <HeroesFilters />
         </div>
       </div>

@@ -1,9 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
-
-import { createHero } from "../heroesList/heroesSlice";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { selectAll } from "../heroesFilters/filtersSlice";
 import store from "../../store";
-
+import { useCreateHeroMutation } from "../../api/apiSlice";
 import { v4 as uuidv4 } from "uuid";
 import {
   Formik,
@@ -15,12 +14,19 @@ import * as Yup from "yup";
 
 import Spinner from "../spinner/Spinner";
 
-const HeroesAddForm = () => {
+const HeroesAddForm = ({ setCreateIsLoading, setCreateIsError }) => {
+  const [createHero, { isLoading, isError }] = useCreateHeroMutation();
+
+  useEffect(() => {
+    setCreateIsLoading(isLoading);
+    setCreateIsError(isError);
+    // eslint-disable-next-line no-use-before-define
+  }, [isLoading, isError]);
+
   const filters = selectAll(store.getState());
   const { loadingStatus: filtersLoadingStatus } = useSelector(
     (state) => state.filters
   );
-  const dispatch = useDispatch();
 
   return (
     <Formik
@@ -46,7 +52,8 @@ const HeroesAddForm = () => {
           description: text,
           element: element,
         };
-        dispatch(createHero({ newHero, resetForm }));
+        createHero(newHero).unwrap();
+        resetForm();
       }}
     >
       <Form className="border p-4 shadow-lg rounded">

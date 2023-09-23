@@ -1,42 +1,58 @@
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useMemo } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-
-import { fetchHeroes, filteredHeroesSelector } from "./heroesSlice";
-
+import { useGetHeroesQuery } from "../../api/apiSlice";
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from "../spinner/Spinner";
 
 import "../heroesListItem/heroesListItem.scss";
 
-const HeroesList = () => {
-  const filteredHeroes = useSelector(filteredHeroesSelector);
-  const heroesloadingStatus = useSelector(
-    (state) => state.heroes.loadingStatus
-  );
-  const dispatch = useDispatch();
+const HeroesList = ({
+  setGetIsLoading,
+  setDeleteIsLoading,
+  deleteIsError,
+  setDeleteIsError,
+  createIsError,
+}) => {
+  const {
+    data: heroes = [],
+    isFetching: getIsFetching,
+    isLoading: getIsLoading,
+    isError: getIsError,
+  } = useGetHeroesQuery();
 
   useEffect(() => {
-    dispatch(fetchHeroes());
+    setGetIsLoading(getIsLoading || getIsFetching);
     // eslint-disable-next-line no-use-before-define
-  }, []);
+  }, [getIsLoading, getIsFetching]);
 
-  if (heroesloadingStatus === "fetching") {
+  const activeFilter = useSelector((state) => state.filters.activeFilter);
+
+  const filteredHeroes = useMemo(() => {
+    const filteredHeroes = heroes.slice();
+
+    if (activeFilter === "all") {
+      return filteredHeroes;
+    } else {
+      return filteredHeroes.filter((item) => item.element === activeFilter);
+    }
+  }, [heroes, activeFilter]);
+
+  if (getIsLoading || getIsFetching) {
     return <Spinner />;
-  } else if (heroesloadingStatus === "fetch-error") {
+  } else if (getIsError) {
     return (
       <h5 className="text-center mt-5">
         Ошибка во время попытки загрузки героев
       </h5>
     );
-  } else if (heroesloadingStatus === "delete-error") {
+  } else if (deleteIsError) {
     return (
       <h5 className="text-center mt-5">
         Ошибка во время попытки удаления героя
       </h5>
     );
-  } else if (heroesloadingStatus === "create-error") {
+  } else if (createIsError) {
     return (
       <h5 className="text-center mt-5">
         Ошибка во время попытки отправки нового героя
@@ -55,7 +71,12 @@ const HeroesList = () => {
 
     return arr.map(({ id, ...props }) => (
       <CSSTransition key={id} timeout={300} classNames="heroes-list-item">
-        <HeroesListItem id={id} {...props} />
+        <HeroesListItem
+          id={id}
+          setDeleteIsLoading={setDeleteIsLoading}
+          setDeleteIsError={setDeleteIsError}
+          {...props}
+        />
       </CSSTransition>
     ));
   };
