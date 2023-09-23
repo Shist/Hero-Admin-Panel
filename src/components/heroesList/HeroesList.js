@@ -5,11 +5,7 @@ import { useDispatch } from "react-redux";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
 
-import {
-  heroesFetching,
-  heroesFetched,
-  heroesFetchingError,
-} from "../../actions";
+import { fetchHeroes } from "../../actions";
 
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from "../spinner/Spinner";
@@ -36,10 +32,7 @@ const HeroesList = () => {
   const { request } = useHttp();
 
   useEffect(() => {
-    dispatch(heroesFetching());
-    request("http://localhost:3001/heroes")
-      .then((data) => dispatch(heroesFetched(data)))
-      .catch(() => dispatch(heroesFetchingError()));
+    dispatch(fetchHeroes(request));
     // eslint-disable-next-line no-use-before-define
   }, []);
 

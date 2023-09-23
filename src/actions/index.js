@@ -1,3 +1,10 @@
+export const fetchHeroes = (request) => (dispatch) => {
+  dispatch(heroesFetching());
+  request("http://localhost:3001/heroes")
+    .then((data) => dispatch(heroesFetched(data)))
+    .catch(() => dispatch(heroesFetchingError()));
+};
+
 export const heroesFetching = () => {
   return {
     type: "HEROES_FETCHING",
@@ -15,6 +22,13 @@ export const heroesFetchingError = () => {
   return {
     type: "HEROES_FETCHING_ERROR",
   };
+};
+
+export const deleteHero = (request, id) => (dispatch) => {
+  dispatch(heroDeleting());
+  request(`http://localhost:3001/heroes/${id}`, "DELETE")
+    .then(() => dispatch(heroDeleted(id)))
+    .catch(() => dispatch(heroDeletingError()));
 };
 
 export const heroDeleting = () => {
@@ -36,6 +50,16 @@ export const heroDeletingError = () => {
   };
 };
 
+export const createHero = (request, newHero, resetForm) => (dispatch) => {
+  dispatch(heroCreating());
+  request(`http://localhost:3001/heroes`, "POST", JSON.stringify(newHero))
+    .then(() => {
+      resetForm();
+      dispatch(heroCreated(newHero));
+    })
+    .catch(() => dispatch(heroCreatingError()));
+};
+
 export const heroCreating = () => {
   return {
     type: "HERO_CREATING",
@@ -53,6 +77,13 @@ export const heroCreatingError = () => {
   return {
     type: "HERO_CREATING_ERROR",
   };
+};
+
+export const fetchFilters = (request) => (dispatch) => {
+  dispatch(filtersFetching());
+  request("http://localhost:3001/filters")
+    .then((data) => dispatch(filtersFetched(data)))
+    .catch(() => dispatch(filtersFetchingError()));
 };
 
 export const filtersFetching = () => {
@@ -80,3 +111,13 @@ export const activeFilterChanged = (newActiveFilter) => {
     payload: newActiveFilter,
   };
 };
+
+// Example of using Redux-Thunk
+// export const activeFilterChanged = (newActiveFilter) => (dispatch) => {
+//   setTimeout(() => {
+//     dispatch({
+//       type: "ACTIVE_FILTER_CHANGED",
+//       payload: newActiveFilter,
+//     });
+//   }, 1000);
+// };

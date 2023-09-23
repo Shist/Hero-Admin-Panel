@@ -1,7 +1,7 @@
 import { useHttp } from "../../hooks/http.hook";
 import { useDispatch, useSelector } from "react-redux";
 
-import { heroCreating, heroCreated, heroCreatingError } from "../../actions";
+import { createHero } from "../../actions";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -45,13 +45,7 @@ const HeroesAddForm = () => {
           description: text,
           element: element,
         };
-        dispatch(heroCreating());
-        request(`http://localhost:3001/heroes`, "POST", JSON.stringify(newHero))
-          .then(() => {
-            resetForm();
-            dispatch(heroCreated(newHero));
-          })
-          .catch(() => dispatch(heroCreatingError()));
+        dispatch(createHero(request, newHero, resetForm));
       }}
     >
       <Form className="border p-4 shadow-lg rounded">
