@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchFilters, activeFilterChanged } from "./filtersSlice";
+import { fetchFilters, activeFilterChanged, selectAll } from "./filtersSlice";
+import store from "../../store";
 
 import Spinner from "../spinner/Spinner";
 
 var classNames = require("classnames");
 
 const HeroesFilters = () => {
-  const {
-    filtersArr,
-    loadingStatus: filtersLoadingStatus,
-    activeFilter,
-  } = useSelector((state) => state.filters);
+  const filters = selectAll(store.getState());
+  const { loadingStatus: filtersLoadingStatus, activeFilter } = useSelector(
+    (state) => state.filters
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const HeroesFilters = () => {
       <div className="card-body">
         <p className="card-text">Отфильтруйте героев по элементам</p>
         <div className="btn-group">
-          {filtersArr.map((item) => {
+          {filters.map((item) => {
             let btnClass = null;
             switch (item.name) {
               case "all":

@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import { createHero } from "../heroesList/heroesSlice";
+import { selectAll } from "../heroesFilters/filtersSlice";
+import store from "../../store";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -14,7 +16,8 @@ import * as Yup from "yup";
 import Spinner from "../spinner/Spinner";
 
 const HeroesAddForm = () => {
-  const { filtersArr, loadingStatus: filtersLoadingStatus } = useSelector(
+  const filters = selectAll(store.getState());
+  const { loadingStatus: filtersLoadingStatus } = useSelector(
     (state) => state.filters
   );
   const dispatch = useDispatch();
@@ -103,7 +106,7 @@ const HeroesAddForm = () => {
                 disabled={filtersLoadingStatus === "fetch-error"}
               >
                 <option>Я владею элементом...</option>
-                {filtersArr
+                {filters
                   .filter((item) => item.name !== "all")
                   .map((item) => (
                     <option key={item.id} value={item.name}>

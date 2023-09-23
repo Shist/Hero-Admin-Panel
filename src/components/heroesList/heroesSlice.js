@@ -1,10 +1,14 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+} from "@reduxjs/toolkit";
 import { useHttp } from "../../hooks/http.hook";
 
-const initialState = {
-  heroesArr: [],
-  loadingStatus: "idle",
-};
+const heroesAdapter = createEntityAdapter();
+
+const initialState = heroesAdapter.getInitialState({ loadingStatus: "idle" });
 
 export const fetchHeroes = createAsyncThunk("heroes/fetchHeroes", async () => {
   const { request } = useHttp();
@@ -44,9 +48,7 @@ const heroesSlice = createSlice({
   initialState,
   reducers: {
     heroDeleted: (state, action) => {
-      state.heroesArr = state.heroesArr.filter(
-        (item) => item.id !== action.payload
-      );
+      heroesAdapter.removeOne(state, action.payload);
       state.loadingStatus = "idle";
     },
   },
@@ -56,7 +58,7 @@ const heroesSlice = createSlice({
         state.loadingStatus = "fetching";
       })
       .addCase(fetchHeroes.fulfilled, (state, action) => {
-        state.heroesArr = action.payload;
+        heroesAdapter.setAll(state, action.payload);
         state.loadingStatus = "idle";
       })
       .addCase(fetchHeroes.rejected, (state) => {
@@ -75,7 +77,7 @@ const heroesSlice = createSlice({
         state.loadingStatus = "creating";
       })
       .addCase(createHero.fulfilled, (state, action) => {
-        state.heroesArr.push(action.payload);
+        heroesAdapter.addOne(state, action.payload);
         state.loadingStatus = "idle";
       })
       .addCase(createHero.rejected, (state) => {
@@ -88,4 +90,19 @@ const heroesSlice = createSlice({
 const { actions, reducer } = heroesSlice;
 
 export default reducer;
+
+const { selectAll } = heroesAdapter.getSelectors((state) => state.heroes);
+
+export const filteredHeroesSelector = createSelector(
+  (state) => state.filters.activeFilter,
+  selectAll,
+  (activeFilter, heroesArr) => {
+    if (activeFilter === "all") {
+      return heroesArr;
+    } else {
+      return heroesArr.filter((item) => item.element === activeFilter);
+    }
+  }
+);
+
 export const { heroDeleted } = actions;
