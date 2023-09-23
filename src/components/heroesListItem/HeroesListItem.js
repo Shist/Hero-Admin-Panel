@@ -1,14 +1,12 @@
-import { useHttp } from "../../hooks/http.hook";
 import { useDispatch } from "react-redux";
 
-import { deleteHero } from "../../actions";
+import { deleteHero } from "../heroesList/heroesSlice";
 
 const HeroesListItem = ({ id, name, description, element }) => {
   const dispatch = useDispatch();
-  const { request } = useHttp();
 
   const deleteItem = async () => {
-    dispatch(deleteHero(request, id));
+    dispatch(deleteHero(id));
   };
 
   let elementClassName;

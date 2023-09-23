@@ -1,7 +1,6 @@
-import { useHttp } from "../../hooks/http.hook";
 import { useDispatch, useSelector } from "react-redux";
 
-import { createHero } from "../../actions";
+import { createHero } from "../heroesList/heroesSlice";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -19,7 +18,6 @@ const HeroesAddForm = () => {
     (state) => state.filters
   );
   const dispatch = useDispatch();
-  const { request } = useHttp();
 
   return (
     <Formik
@@ -45,7 +43,7 @@ const HeroesAddForm = () => {
           description: text,
           element: element,
         };
-        dispatch(createHero(request, newHero, resetForm));
+        dispatch(createHero({ newHero, resetForm }));
       }}
     >
       <Form className="border p-4 shadow-lg rounded">
