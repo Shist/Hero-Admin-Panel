@@ -35,7 +35,7 @@ const HeroesListItem = ({ id, name, description, element }) => {
       className={`card flex-row mb-4 shadow-lg text-white ${elementClassName}`}
     >
       <img
-        src="http://www.stpaulsteinbach.org/wp-content/uploads/2014/09/unknown-hero.jpg"
+        src="https://static.thenounproject.com/png/2227044-200.png"
         className="img-fluid w-25 d-inline"
         alt="unknown hero"
         style={{ objectFit: "cover" }}
